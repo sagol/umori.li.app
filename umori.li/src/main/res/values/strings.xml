@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="umorili_url">http://www.umori.li/</string>
+    <string name="umorili_api_url">http://www.umori.li/api/</string>
+
+    <string name="app_name">umori.li</string>
+    <string name="title_source_detail">...</string>
+    <string name="random_label">Случайные</string>
+    <string name="options_label">Настройки</string>
+    <string name="theme_label">Тема</string>
+    <string name="connection_error_text">Ошибка связи...</string>
+    <string name="loading_text">Загрузка данных...</string>
+    <string name="refresh_text">Обновить</string>
+    <string name="interface_preferences">Интерфейс</string>
+    <string name="theme_list_preference">Тема</string>
+    <string-array name="entries_themes_list">
+        <item>По-умолчанию</item>
+        <item>Светлая</item>
+        <item>Светлая с темным меню</item>
+    </string-array>
+    <string-array name="entryvalues_themes_list">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+</resources>
