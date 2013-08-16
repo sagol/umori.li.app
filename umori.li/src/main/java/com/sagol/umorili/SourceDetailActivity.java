@@ -9,25 +9,17 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
-/**
- * An activity representing a single Source detail screen. This
- * activity is only used on handset devices. On tablet-size devices,
- * item details are presented side-by-side with a list of items
- * in a {@link SourceListActivity}.
- * <p>
- * This activity is mostly just a 'shell' activity containing nothing
- * more than a {@link SourceDetailFragment}.
- */
 public class SourceDetailActivity extends SherlockFragmentActivity {
+
+    public static int THEME = SourceListActivity.THEME;
+    public static String selecteID = SourceListActivity.selecteID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setTheme(SourceListActivity.THEME);
+        setTheme(THEME);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_source_detail);
 
- //       getActionBar().setDisplayHomeAsUpEnabled(true);
-        //скрываем статусбар:
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
@@ -41,19 +33,34 @@ public class SourceDetailActivity extends SherlockFragmentActivity {
                     .add(R.id.source_detail_container, fragment)
                     .commit();
 
-            try {
-                UmoriliDataContent.DataItem mItem = SourceListFragment.udc.ITEM_MAP.get(SourceListActivity.selecteID);
-                setTitle(mItem.desc);
-            } catch (Exception e){ // надо переделать на UncaughtExceptionHandler
-                setTitle("");
-            }
-
+        } else {
+            THEME     = savedInstanceState.getInt("theme");
+            selecteID = savedInstanceState.getString("select_id");
         }
+        try {
+            UmoriliDataContent.DataItem mItem = SourceListFragment.udc.ITEM_MAP.get(selecteID);
+            setTitle(mItem.desc);
+        } catch (Exception e){ // надо переделать на UncaughtExceptionHandler
+            setTitle("");
+        }
+
+    }
+
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("theme", THEME);
+        outState.putString("select_id", selecteID);
+    }
+
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        THEME     = savedInstanceState.getInt("theme");
+        selecteID = savedInstanceState.getString("select_id");
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        boolean isLight = SourceListActivity.THEME == R.style.Theme_Sherlock_Light;
+        boolean isLight = THEME == R.style.Theme_Sherlock_Light;
         menu.add(getResources().getString(R.string.refresh_text)).setIcon(isLight ?
                 R.drawable.ic_navigation_refresh_light :
                 R.drawable.ic_navigation_refresh).setShowAsAction(
@@ -66,13 +73,6 @@ public class SourceDetailActivity extends SherlockFragmentActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                // This ID represents the Home or Up button. In the case of this
-                // activity, the Up button is shown. Use NavUtils to allow users
-                // to navigate up one level in the application structure. For
-                // more details, see the Navigation pattern on Android Design:
-                //
-                // http://developer.android.com/design/patterns/navigation.html#up-vs-back
-                //
                 NavUtils.navigateUpTo(this, new Intent(this, SourceListActivity.class));
                 return true;
             case 0:

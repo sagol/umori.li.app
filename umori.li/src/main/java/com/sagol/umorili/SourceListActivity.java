@@ -18,27 +18,23 @@ public class SourceListActivity extends SherlockFragmentActivity
 
 
     public static int THEME = R.style.Theme_Sherlock_Light_DarkActionBar;
-    /**
-     * Whether or not the activity is in two-pane mode, i.e. running on a tablet
-     * device.
-     */
-    private boolean mTwoPane;
+    private static boolean mTwoPane = false;
     public static String selecteID = "random";  //random
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         loadPref();
         super.onCreate(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            THEME     = savedInstanceState.getInt("theme");
+            mTwoPane  = savedInstanceState.getBoolean("pane");
+            selecteID = savedInstanceState.getString("select_id");
+        }
         setContentView(R.layout.activity_source_list);
         if (findViewById(R.id.source_detail_container) != null) {
-            // The detail container view will be present only in the
-            // large-screen layouts (res/values-large and
-            // res/values-sw600dp). If this view is present, then the
-            // activity should be in two-pane mode.
             mTwoPane = true;
 
-            // In two-pane mode, list items should be given the
-            // 'activated' state when touched.
             ((SourceListFragment) getSupportFragmentManager()
                     .findFragmentById(R.id.source_list))
                     .setActivateOnItemClick(true);
@@ -51,20 +47,26 @@ public class SourceListActivity extends SherlockFragmentActivity
                     .replace(R.id.source_detail_container, fragment)
                     .commit();
         }
+    }
 
-        // TODO: If exposing deep links into your app, handle intents here.
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("theme", THEME);
+        outState.putBoolean("pane", mTwoPane);
+        outState.putString("select_id", selecteID);
+    }
+
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        THEME     = savedInstanceState.getInt("theme");
+        mTwoPane  = savedInstanceState.getBoolean("pane");
+        selecteID = savedInstanceState.getString("select_id");
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         boolean isLight = SourceListActivity.THEME == R.style.Theme_Sherlock_Light;
-/*
-        SubMenu sub = menu.addSubMenu(getResources().getString(R.string.theme_label));
-        sub.add(0, R.style.Theme_Sherlock, 0, "Default");
-        sub.add(0, R.style.Theme_Sherlock_Light, 0, "Light");
-        sub.getItem().setShowAsAction(
-                MenuItem.SHOW_AS_ACTION_IF_ROOM|MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-*/
+
         menu.add(0, 1, 1, getResources().getString(R.string.random_label)).setIcon(isLight ?
                 R.drawable.ic_av_shuffle_light:
                 R.drawable.ic_av_shuffle).setShowAsAction(
@@ -92,27 +94,25 @@ public class SourceListActivity extends SherlockFragmentActivity
             case 1: {
                 selecteID = "random";
                 LoadData loadData = new LoadData(this);
-                if (loadData != null)
-                    try {
-                        loadData.execute("").get();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    } catch (ExecutionException e) {
-                        e.printStackTrace();
-                    }
+                try {
+                    loadData.execute("").get();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
                 break;
             }
             case 2: {
                 if (mTwoPane) {
                     LoadData loadData = new LoadData(this);
-                    if (loadData != null)
-                        try {
-                            loadData.execute("main").get();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        } catch (ExecutionException e) {
-                            e.printStackTrace();
-                        }
+                    try {
+                        loadData.execute("main").get();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    }
                 }
                 else {
                     SourceListFragment sherlockListFragment = (SourceListFragment)
@@ -132,7 +132,6 @@ public class SourceListActivity extends SherlockFragmentActivity
             }
         }
         return super.onOptionsItemSelected(item);
-//        return true;
     }
 
     @Override
@@ -162,26 +161,19 @@ public class SourceListActivity extends SherlockFragmentActivity
         }
 
         setTheme(THEME);
-//        String st = mySharedPreferences.getString("theme_list_preference", "0");
-//        int n = Integer.parseInt(st);
     }
 
-    /**
-     * Callback method from {@link SourceListFragment.Callbacks}
-     * indicating that the item with the given ID was selected.
-     */
     @Override
     public void onItemSelected(String id) {
         selecteID = id;
         LoadData loadData = new LoadData(this);
-        if (loadData != null)
-            try {
-                loadData.execute("").get();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            }
+        try {
+            loadData.execute("").get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
     }
 
     private class LoadData extends AsyncTask<String, Void, String> {

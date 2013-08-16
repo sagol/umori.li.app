@@ -1,5 +1,7 @@
 .idea
 .gradle
+*.iml
+*.eml
 # built application files
 *.apk
 *.ap_
