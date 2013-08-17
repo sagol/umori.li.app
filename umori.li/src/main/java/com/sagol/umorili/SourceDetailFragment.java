@@ -87,14 +87,12 @@ public class SourceDetailFragment extends SherlockFragment {
         ScrollView scroller = (ScrollView) rootView.findViewById(R.id.scrollView);
         scroller.setSmoothScrollingEnabled(true);
         webView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
-        if (SourceListActivity.THEME == R.style.Theme_Sherlock) {
+        if (SourceDetailActivity.THEME == R.style.Theme_Sherlock) {
             webView.setBackgroundColor(0x00000000);
         }
         try {
-
             String summary = "<html><body>" + getTask.get() + "</body></html>";
             webView.loadDataWithBaseURL(null, summary, "text/html", "utf-8", null);
-
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {

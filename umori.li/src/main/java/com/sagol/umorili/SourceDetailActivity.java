@@ -16,6 +16,16 @@ public class SourceDetailActivity extends SherlockFragmentActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        if (savedInstanceState != null) {
+            THEME     = savedInstanceState.getInt("theme");
+            selecteID = savedInstanceState.getString("select_id");
+        } else {
+            THEME = SourceListActivity.THEME;
+            selecteID = SourceListActivity.selecteID;
+
+        }
+
         setTheme(THEME);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_source_detail);
@@ -32,10 +42,6 @@ public class SourceDetailActivity extends SherlockFragmentActivity {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.source_detail_container, fragment)
                     .commit();
-
-        } else {
-            THEME     = savedInstanceState.getInt("theme");
-            selecteID = savedInstanceState.getString("select_id");
         }
         try {
             UmoriliDataContent.DataItem mItem = SourceListFragment.udc.ITEM_MAP.get(selecteID);
@@ -43,7 +49,6 @@ public class SourceDetailActivity extends SherlockFragmentActivity {
         } catch (Exception e){ // надо переделать на UncaughtExceptionHandler
             setTitle("");
         }
-
     }
 
     protected void onSaveInstanceState(Bundle outState) {
