@@ -82,7 +82,7 @@ public class SourceDetailActivity extends SherlockFragmentActivity {
                 return true;
             case 0:
                 SourceDetailFragment sourceDetailFragment = (SourceDetailFragment)
-                        getSupportFragmentManager().findFragmentById(R.id.webView);
+                        getSupportFragmentManager().findFragmentById(R.id.source_detail_container);
 
                 if (sourceDetailFragment != null) {
                     sourceDetailFragment.getData();

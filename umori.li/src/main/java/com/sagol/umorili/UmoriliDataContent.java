@@ -2,12 +2,11 @@ package com.sagol.umorili;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class UmoriliDataContent {
 
-    public List<DataItem> ITEMS = new ArrayList<DataItem>();
+    public ArrayList<DataItem> ITEMS = new ArrayList<DataItem>();
 
     public Map<String, DataItem> ITEM_MAP = new HashMap<String, DataItem>();
 

@@ -1,17 +1,13 @@
 package com.sagol.umorili;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-
-import java.util.concurrent.ExecutionException;
 
 public class SourceListActivity extends SherlockFragmentActivity
         implements SourceListFragment.Callbacks {
@@ -93,26 +89,30 @@ public class SourceListActivity extends SherlockFragmentActivity
         switch (item.getItemId()) {
             case 1: {
                 selecteID = "random";
-                LoadData loadData = new LoadData(this);
-                try {
-                    loadData.execute("").get();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
+                if (mTwoPane) {
+                    Bundle arguments = new Bundle();
+                    arguments.putString(SourceDetailFragment.ARG_ITEM_ID, selecteID);
+                    SourceDetailFragment fragment = new SourceDetailFragment();
+                    fragment.setArguments(arguments);
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.source_detail_container, fragment)
+                            .commit();
+                } else {
+                    Intent detailIntent = new Intent(this, SourceDetailActivity.class);
+                    detailIntent.putExtra(SourceDetailFragment.ARG_ITEM_ID, selecteID);
+                    startActivity(detailIntent);
                 }
                 break;
             }
             case 2: {
                 if (mTwoPane) {
-                    LoadData loadData = new LoadData(this);
-                    try {
-                        loadData.execute("main").get();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    } catch (ExecutionException e) {
-                        e.printStackTrace();
-                    }
+                    Bundle arguments = new Bundle();
+                    arguments.putString(SourceDetailFragment.ARG_ITEM_ID, selecteID);
+                    SourceDetailFragment fragment = new SourceDetailFragment();
+                    fragment.setArguments(arguments);
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.source_detail_container, fragment)
+                            .commit();
                 }
                 else {
                     SourceListFragment sherlockListFragment = (SourceListFragment)
@@ -166,57 +166,20 @@ public class SourceListActivity extends SherlockFragmentActivity
     @Override
     public void onItemSelected(String id) {
         selecteID = id;
-        LoadData loadData = new LoadData(this);
-        try {
-            loadData.execute("").get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
+        if (mTwoPane) {
+            Bundle arguments = new Bundle();
+            arguments.putString(SourceDetailFragment.ARG_ITEM_ID, selecteID);
+            SourceDetailFragment fragment = new SourceDetailFragment();
+            fragment.setArguments(arguments);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.source_detail_container, fragment)
+                    .commit();
+        } else {
+            Intent detailIntent = new Intent(this, SourceDetailActivity.class);
+            detailIntent.putExtra(SourceDetailFragment.ARG_ITEM_ID, selecteID);
+            startActivity(detailIntent);
         }
-    }
-
-    private class LoadData extends AsyncTask<String, Void, String> {
-
-        private ProgressDialog spinner;
-        private SherlockFragmentActivity activity;
-
-        public LoadData(SherlockFragmentActivity activity) {
-            this.activity = activity;
-        }
-        @Override
-        protected void onPreExecute() {
-            spinner = new ProgressDialog(activity);
-            spinner.setMessage("Идет загрузка...");
-            spinner.show();
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            spinner.dismiss();
-        }
-
-        protected String doInBackground(String... activity) {
-            if (mTwoPane) {
-                Bundle arguments = new Bundle();
-                arguments.putString(SourceDetailFragment.ARG_ITEM_ID, selecteID);
-                SourceDetailFragment fragment = new SourceDetailFragment();
-                fragment.setArguments(arguments);
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.source_detail_container, fragment)
-                        .commit();
-            }
-            else if (!(activity[0].equals("main"))){
-                Intent detailIntent = new Intent(this.activity, SourceDetailActivity.class);
-                detailIntent.putExtra(SourceDetailFragment.ARG_ITEM_ID, selecteID);
-                startActivity(detailIntent);
-            }
-            return null;
-        }
-
-        protected void onProgressUpdate(Void... progress) {
-        }
-
     }
 
 }
+
