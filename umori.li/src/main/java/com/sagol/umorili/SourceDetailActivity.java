@@ -13,6 +13,7 @@ public class SourceDetailActivity extends SherlockFragmentActivity {
 
     public static int THEME = SourceListActivity.THEME;
     public static String selecteID = SourceListActivity.selecteID;
+    public static int font_size = SourceListActivity.font_size;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,10 +21,11 @@ public class SourceDetailActivity extends SherlockFragmentActivity {
         if (savedInstanceState != null) {
             THEME     = savedInstanceState.getInt("theme");
             selecteID = savedInstanceState.getString("select_id");
+            font_size = savedInstanceState.getInt("font_size");
         } else {
             THEME = SourceListActivity.THEME;
             selecteID = SourceListActivity.selecteID;
-
+            font_size = SourceListActivity.font_size;
         }
 
         setTheme(THEME);
@@ -55,12 +57,14 @@ public class SourceDetailActivity extends SherlockFragmentActivity {
         super.onSaveInstanceState(outState);
         outState.putInt("theme", THEME);
         outState.putString("select_id", selecteID);
+        outState.putInt("font_size", font_size);
     }
 
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         THEME     = savedInstanceState.getInt("theme");
         selecteID = savedInstanceState.getString("select_id");
+        font_size = savedInstanceState.getInt("font_size");
     }
 
     @Override

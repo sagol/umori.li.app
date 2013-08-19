@@ -17,4 +17,16 @@
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
 
+    <style name="smallFont">
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="normalFont">
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <style name="largeFont">
+        <item name="android:textSize">18sp</item>
+    </style>
+
 </resources>

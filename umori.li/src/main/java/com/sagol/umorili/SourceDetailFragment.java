@@ -39,7 +39,7 @@ public class SourceDetailFragment extends SherlockListFragment {
             e.printStackTrace();
         }
 
-        if (udc.ITEMS.size() == 0) {
+        if (udc == null || udc.ITEMS.size() == 0) {
             Toast.makeText(this.getSherlockActivity(),
                     getResources().getString(R.string.connection_error_text),
                     Toast.LENGTH_LONG).show();

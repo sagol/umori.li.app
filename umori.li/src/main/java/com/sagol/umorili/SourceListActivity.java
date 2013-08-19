@@ -15,7 +15,8 @@ public class SourceListActivity extends SherlockFragmentActivity
 
     public static int THEME = R.style.Theme_Sherlock_Light_DarkActionBar;
     private static boolean mTwoPane = false;
-    public static String selecteID = "random";  //random
+    public static String selecteID = "random";
+    public static int font_size = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +27,7 @@ public class SourceListActivity extends SherlockFragmentActivity
             THEME     = savedInstanceState.getInt("theme");
             mTwoPane  = savedInstanceState.getBoolean("pane");
             selecteID = savedInstanceState.getString("select_id");
+            font_size     = savedInstanceState.getInt("font_size");
         }
         setContentView(R.layout.activity_source_list);
         if (findViewById(R.id.source_detail_container) != null) {
@@ -50,6 +52,7 @@ public class SourceListActivity extends SherlockFragmentActivity
         outState.putInt("theme", THEME);
         outState.putBoolean("pane", mTwoPane);
         outState.putString("select_id", selecteID);
+        outState.putInt("font_size", font_size);
     }
 
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
@@ -57,6 +60,7 @@ public class SourceListActivity extends SherlockFragmentActivity
         THEME     = savedInstanceState.getInt("theme");
         mTwoPane  = savedInstanceState.getBoolean("pane");
         selecteID = savedInstanceState.getString("select_id");
+        font_size = savedInstanceState.getInt("font_size");
     }
 
     @Override
@@ -142,7 +146,7 @@ public class SourceListActivity extends SherlockFragmentActivity
 
     private void loadPref(){
         SharedPreferences mySharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String pref = mySharedPreferences.getString("theme_list_preference", "2");
+        String pref = mySharedPreferences.getString("theme_list_preference", "0");
 
         try {
             switch (Integer.parseInt(pref)) {
@@ -161,6 +165,13 @@ public class SourceListActivity extends SherlockFragmentActivity
         }
 
         setTheme(THEME);
+
+        String font = mySharedPreferences.getString("font_list_preference", "1");
+        try {
+            font_size = Integer.parseInt(font);
+        } catch (NumberFormatException e) {
+            font_size = 1;
+        }
     }
 
     @Override

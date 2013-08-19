@@ -10,7 +10,16 @@
                 android:title="@string/theme_list_preference"
                 android:entries="@array/entries_themes_list"
                 android:entryValues="@array/entryvalues_themes_list"
+                android:defaultValue="0"
                 android:dialogTitle="@string/theme_list_preference" />
+
+        <ListPreference
+                android:key="font_list_preference"
+                android:title="@string/font_list_preference"
+                android:entries="@array/entries_font_list"
+                android:entryValues="@array/entryvalues_font_list"
+                android:defaultValue="1"
+                android:dialogTitle="@string/font_list_preference" />
 
     </PreferenceCategory>
 

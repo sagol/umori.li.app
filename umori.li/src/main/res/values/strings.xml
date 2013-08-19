@@ -14,8 +14,9 @@
     <string name="refresh_text">Обновить</string>
     <string name="interface_preferences">Интерфейс</string>
     <string name="theme_list_preference">Тема</string>
+    <string name="font_list_preference">Шрифт</string>
     <string-array name="entries_themes_list">
-        <item>По-умолчанию</item>
+        <item>Темная</item>
         <item>Светлая</item>
         <item>Светлая с темным меню</item>
     </string-array>
@@ -24,4 +25,15 @@
         <item>1</item>
         <item>2</item>
     </string-array>
+    <string-array name="entries_font_list">
+        <item>Маленький</item>
+        <item>Нормальный</item>
+        <item>Большой</item>
+    </string-array>
+    <string-array name="entryvalues_font_list">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
 </resources>
