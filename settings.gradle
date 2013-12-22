@@ -1,1 +1,1 @@
-include ':umori.li', ":libraries:actionbarsherlock"
+include ':umori.li'

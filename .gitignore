@@ -22,3 +22,13 @@ local.properties
 # Eclipse project files
 .classpath
 .project
+
+.gradle
+/local.properties
+/.idea/workspace.xml
+.DS_Store
+
+# Intellij
+.idea/
+*.iml
+*.iws
