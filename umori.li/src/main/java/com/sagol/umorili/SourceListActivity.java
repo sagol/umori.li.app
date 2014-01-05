@@ -17,6 +17,7 @@ public class SourceListActivity extends SherlockFragmentActivity
     private static boolean mTwoPane = false;
     public static String selecteID = "random";
     public static int font_size = 1;
+    public static boolean full_screen = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,10 +25,11 @@ public class SourceListActivity extends SherlockFragmentActivity
         super.onCreate(savedInstanceState);
 
         if (savedInstanceState != null) {
-            THEME     = savedInstanceState.getInt("theme");
-            mTwoPane  = savedInstanceState.getBoolean("pane");
-            selecteID = savedInstanceState.getString("select_id");
-            font_size     = savedInstanceState.getInt("font_size");
+            THEME        = savedInstanceState.getInt("theme");
+            mTwoPane     = savedInstanceState.getBoolean("pane");
+            selecteID    = savedInstanceState.getString("select_id");
+            font_size    = savedInstanceState.getInt("font_size");
+            full_screen  = savedInstanceState.getBoolean("full_screen");
         }
         setContentView(R.layout.activity_source_list);
         if (findViewById(R.id.source_detail_container) != null) {
@@ -53,6 +55,7 @@ public class SourceListActivity extends SherlockFragmentActivity
         outState.putBoolean("pane", mTwoPane);
         outState.putString("select_id", selecteID);
         outState.putInt("font_size", font_size);
+        outState.putBoolean("full_screen", full_screen);
     }
 
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
@@ -61,6 +64,7 @@ public class SourceListActivity extends SherlockFragmentActivity
         mTwoPane  = savedInstanceState.getBoolean("pane");
         selecteID = savedInstanceState.getString("select_id");
         font_size = savedInstanceState.getInt("font_size");
+        full_screen = savedInstanceState.getBoolean("full_screen");
     }
 
     @Override
@@ -172,6 +176,8 @@ public class SourceListActivity extends SherlockFragmentActivity
         } catch (NumberFormatException e) {
             font_size = 1;
         }
+
+        full_screen = mySharedPreferences.getBoolean("fullscreen_preference", false);
     }
 
     @Override

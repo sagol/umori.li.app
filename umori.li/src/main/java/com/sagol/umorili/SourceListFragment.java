@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.app.SherlockListFragment;
+import com.actionbarsherlock.widget.ShareActionProvider;
 
 
 import java.util.concurrent.ExecutionException;
@@ -134,7 +135,7 @@ public class SourceListFragment extends SherlockListFragment {
         @Override
         protected void onPreExecute() {
             spinner = new ProgressDialog(activity);
-            spinner.setMessage("Идет загрузка...");
+            spinner.setMessage(getResources().getString(R.string.loading_text));
             spinner.show();
         }
 

@@ -21,6 +21,11 @@
                 android:defaultValue="1"
                 android:dialogTitle="@string/font_list_preference" />
 
+        <CheckBoxPreference
+            android:key="fullscreen_preference"
+            android:title="@string/full_screen_preference"
+            android:summary="@string/full_screen_preference_summary" />
+
     </PreferenceCategory>
 
 

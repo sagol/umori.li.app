@@ -15,6 +15,9 @@
     <string name="interface_preferences">Интерфейс</string>
     <string name="theme_list_preference">Тема</string>
     <string name="font_list_preference">Шрифт</string>
+    <string name="full_screen_preference">Полноэкранный режим</string>
+    <string name="full_screen_preference_summary">Читать в полноэкранном режиме</string>
+    <string name="action_bar_share_with">Поделиться...</string>
     <string-array name="entries_themes_list">
         <item>Темная</item>
         <item>Светлая</item>

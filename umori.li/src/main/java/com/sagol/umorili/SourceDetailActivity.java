@@ -3,36 +3,46 @@ package com.sagol.umorili;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
+import android.view.ContextMenu;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.widget.ShareActionProvider;
 
 public class SourceDetailActivity extends SherlockFragmentActivity {
 
     public static int THEME = SourceListActivity.THEME;
     public static String selecteID = SourceListActivity.selecteID;
     public static int font_size = SourceListActivity.font_size;
+    public static boolean full_screen = SourceListActivity.full_screen;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         if (savedInstanceState != null) {
-            THEME     = savedInstanceState.getInt("theme");
-            selecteID = savedInstanceState.getString("select_id");
-            font_size = savedInstanceState.getInt("font_size");
+            THEME       = savedInstanceState.getInt("theme");
+            selecteID   = savedInstanceState.getString("select_id");
+            font_size   = savedInstanceState.getInt("font_size");
+            full_screen = savedInstanceState.getBoolean("full_screen");
         } else {
             THEME = SourceListActivity.THEME;
             selecteID = SourceListActivity.selecteID;
             font_size = SourceListActivity.font_size;
+            full_screen = SourceListActivity.full_screen;
         }
 
         setTheme(THEME);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_source_detail);
 
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+        if (full_screen) getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         if (savedInstanceState == null) {
@@ -58,13 +68,15 @@ public class SourceDetailActivity extends SherlockFragmentActivity {
         outState.putInt("theme", THEME);
         outState.putString("select_id", selecteID);
         outState.putInt("font_size", font_size);
+        outState.putBoolean("full_screen", full_screen);
     }
 
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        THEME     = savedInstanceState.getInt("theme");
-        selecteID = savedInstanceState.getString("select_id");
-        font_size = savedInstanceState.getInt("font_size");
+        THEME       = savedInstanceState.getInt("theme");
+        selecteID   = savedInstanceState.getString("select_id");
+        font_size   = savedInstanceState.getInt("font_size");
+        full_screen = savedInstanceState.getBoolean("full_screen");
     }
 
     @Override

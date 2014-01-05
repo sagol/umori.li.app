@@ -6,6 +6,7 @@
     <ListView
             android:id="@+id/sources_detail_listview"
             android:layout_width="match_parent"
+            android:state_checked="true"
             android:layout_height="wrap_content">
     </ListView>
 </ScrollView>

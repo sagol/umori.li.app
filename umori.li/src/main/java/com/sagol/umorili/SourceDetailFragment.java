@@ -1,12 +1,19 @@
 package com.sagol.umorili;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.view.ContextMenu;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockListFragment;
+import com.actionbarsherlock.widget.ShareActionProvider;
 
 import java.util.concurrent.ExecutionException;
 
@@ -60,6 +67,62 @@ public class SourceDetailFragment extends SherlockListFragment {
         getData();
     }
 
+/*    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.fragment_source_detail, container, false);
+        ListView listView = (ListView) v.findViewById(R.id.sources_detail_listview);
+        registerForContextMenu(listView);
+        return v;
+    }
+*/
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        ListView listView = getListView();
+        listView.setTextFilterEnabled(true);
+        registerForContextMenu(listView);
+        super.onActivityCreated(savedInstanceState);
+    }
+
+    private Intent createShareIntent(String text) {
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, text);
+        startActivity(shareIntent);
+        return shareIntent;
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+
+/*        MenuItem actionItem = menu.findItem(R.id.menu_item_share_action_provider_action_bar);
+        ShareActionProvider actionProvider = (ShareActionProvider) actionItem.getActionProvider();
+        actionProvider.setShareHistoryFileName(ShareActionProvider.DEFAULT_SHARE_HISTORY_FILE_NAME);
+        // Note that you can set/change the intent any time,
+        // say when the user has selected an image.
+        actionProvider.setShareIntent(createShareIntent());
+*/
+        menu.add(0, 0, 0, getResources().getString(R.string.action_bar_share_with));
+    }
+
+    @Override
+    public boolean onContextItemSelected(android.view.MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info;
+        try {
+            info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        } catch (ClassCastException e) {
+            return false;
+        }
+
+        String text = ((TextView) info.targetView).getText().toString();
+//       Toast.makeText(this.getSherlockActivity(),  String.valueOf(id), Toast.LENGTH_SHORT).show();
+        ShareActionProvider actionProvider = new ShareActionProvider(this.getSherlockActivity());
+        actionProvider.setShareHistoryFileName(ShareActionProvider.DEFAULT_SHARE_HISTORY_FILE_NAME);
+        actionProvider.setShareIntent(createShareIntent(text));
+        return true;
+    }
+
+
     private UmoriliParser umoriliParser = new UmoriliParser();
     private UmoriliDataContent udc_sources;
 
@@ -75,7 +138,7 @@ public class SourceDetailFragment extends SherlockListFragment {
         @Override
         protected void onPreExecute() {
             spinner = new ProgressDialog(activity);
-            spinner.setMessage("Идет загрузка...");
+            spinner.setMessage(getResources().getString(R.string.loading_text));
             spinner.show();
         }
 
