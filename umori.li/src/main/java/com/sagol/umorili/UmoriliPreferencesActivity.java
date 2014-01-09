@@ -32,6 +32,9 @@ public class UmoriliPreferencesActivity extends SherlockPreferenceActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
-
+    @Override
+    public void onBackPressed() {
+        setResult(RESULT_OK);
+        super.onBackPressed();
+    }
 }

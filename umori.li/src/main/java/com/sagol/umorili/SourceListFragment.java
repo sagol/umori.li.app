@@ -10,12 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.app.SherlockListFragment;
-import com.actionbarsherlock.widget.ShareActionProvider;
-
-
-import java.util.concurrent.ExecutionException;
 
 public class SourceListFragment extends SherlockListFragment {
 
@@ -24,6 +19,8 @@ public class SourceListFragment extends SherlockListFragment {
     private Callbacks mCallbacks = sUmoriliCallbacks;
 
     private int mActivatedPosition = ListView.INVALID_POSITION;
+
+    protected Boolean mReady = true;
 
     public interface Callbacks {
         public void onItemSelected(String id);
@@ -40,33 +37,32 @@ public class SourceListFragment extends SherlockListFragment {
 
     private GetSources getSources = null;
 
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mReady = true;
+    }
 
     public boolean getSources (boolean async) {
         if (async)
         {
-            getSources = new GetSources(this.getSherlockActivity());
-            try {
-                getSources.execute("").get();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            }
+            getSources = new GetSources();
+            getSources.execute("");
         }
         else {
             udc = umoriliParser.sources();
-        }
-        if (udc.ITEMS.size() == 0) {
-            Toast.makeText(this.getSherlockActivity(),
-                    getResources().getString(R.string.connection_error_text),
-                    Toast.LENGTH_LONG).show();
-            return false;
-        } else {
-            setListAdapter(new ArrayAdapter<UmoriliDataContent.DataItem>(
-                    getActivity(),
-                    android.R.layout.simple_list_item_activated_1,
-                    android.R.id.text1,
-                    udc.ITEMS.subList(0, udc.ITEMS.size() - 1)));
+            if (udc.ITEMS.size() <= 1) {
+                Toast.makeText(this.getSherlockActivity(),
+                        getResources().getString(R.string.connection_error_text),
+                        Toast.LENGTH_LONG).show();
+                return false;
+            } else {
+                setListAdapter(new ArrayAdapter<UmoriliDataContent.DataItem>(
+                        getActivity(),
+                        android.R.layout.simple_list_item_activated_1,
+                        android.R.id.text1,
+                        udc.ITEMS.subList(1, udc.ITEMS.size())));
+            }
         }
         return true;
     }
@@ -74,7 +70,7 @@ public class SourceListFragment extends SherlockListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getSources(true);
+        //setRetainInstance(true);
     }
 
     @Override
@@ -85,6 +81,7 @@ public class SourceListFragment extends SherlockListFragment {
                 && savedInstanceState.containsKey(STATE_ACTIVATED_POSITION)) {
             setActivatedPosition(savedInstanceState.getInt(STATE_ACTIVATED_POSITION));
         }
+        else getSources(true);
     }
 
     @Override
@@ -94,14 +91,13 @@ public class SourceListFragment extends SherlockListFragment {
         if (!(activity instanceof Callbacks)) {
             throw new IllegalStateException("Activity must implement fragment's callbacks.");
         }
-
         mCallbacks = (Callbacks) activity;
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-
+        mReady = false;
         mCallbacks = sUmoriliCallbacks;
     }
 
@@ -109,7 +105,7 @@ public class SourceListFragment extends SherlockListFragment {
     public void onListItemClick(ListView listView, View view, int position, long id) {
         super.onListItemClick(listView, view, position, id);
 
-        mCallbacks.onItemSelected(udc.ITEMS.get(position).id);
+        mCallbacks.onItemSelected(udc.ITEMS.get(position + 1).id);
     }
 
     @Override
@@ -125,22 +121,30 @@ public class SourceListFragment extends SherlockListFragment {
     public static UmoriliDataContent udc;
 
     private class GetSources extends AsyncTask<String, Void, String> {
-
         private ProgressDialog spinner;
-        private SherlockFragmentActivity activity;
-
-        public GetSources(SherlockFragmentActivity activity) {
-            this.activity = activity;
-        }
         @Override
         protected void onPreExecute() {
-            spinner = new ProgressDialog(activity);
+  //          super.onPreExecute();
+            spinner = new ProgressDialog(getSherlockActivity());
             spinner.setMessage(getResources().getString(R.string.loading_text));
             spinner.show();
         }
 
         @Override
         protected void onPostExecute(String result) {
+//            if(isAdded())
+            {
+                if (udc.ITEMS.size() <= 1) {
+                    Toast.makeText(getSherlockActivity(),
+                        getResources().getString(R.string.connection_error_text), Toast.LENGTH_LONG).show();
+                } else {
+                    setListAdapter(new ArrayAdapter<UmoriliDataContent.DataItem>(
+                            getActivity(),
+                            android.R.layout.simple_list_item_activated_1,
+                            android.R.id.text1,
+                            udc.ITEMS.subList(1, udc.ITEMS.size())));
+                }
+            }
             spinner.dismiss();
         }
 
@@ -149,10 +153,13 @@ public class SourceListFragment extends SherlockListFragment {
             return null;
         }
 
+        @Override
         protected void onProgressUpdate(Void... progress) {
+            super.onProgressUpdate();
         }
 
     }
+
 
     public void setActivateOnItemClick(boolean activateOnItemClick) {
         getListView().setChoiceMode(activateOnItemClick

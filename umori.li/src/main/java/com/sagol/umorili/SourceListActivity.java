@@ -1,9 +1,13 @@
 package com.sagol.umorili;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
@@ -18,18 +22,27 @@ public class SourceListActivity extends SherlockFragmentActivity
     public static String selecteID = "random";
     public static int font_size = 1;
     public static boolean full_screen = false;
+    public static boolean force_caching = false;
+    final int REQUEST_CODE_PREFS  = 1;
+    final int REQUEST_CODE_DETAIL = 2;
+    final int REQUEST_CODE_RANDOM = 3;
+
+    private Handler messageHandler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         loadPref();
+//        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         super.onCreate(savedInstanceState);
+//        setSupportProgressBarIndeterminateVisibility(true);
 
         if (savedInstanceState != null) {
-            THEME        = savedInstanceState.getInt("theme");
-            mTwoPane     = savedInstanceState.getBoolean("pane");
-            selecteID    = savedInstanceState.getString("select_id");
-            font_size    = savedInstanceState.getInt("font_size");
-            full_screen  = savedInstanceState.getBoolean("full_screen");
+            THEME         = savedInstanceState.getInt("theme");
+            mTwoPane      = savedInstanceState.getBoolean("pane");
+            selecteID     = savedInstanceState.getString("select_id");
+            font_size     = savedInstanceState.getInt("font_size");
+            full_screen   = savedInstanceState.getBoolean("full_screen");
+            force_caching = savedInstanceState.getBoolean("force_caching");
         }
         setContentView(R.layout.activity_source_list);
         if (findViewById(R.id.source_detail_container) != null) {
@@ -47,6 +60,11 @@ public class SourceListActivity extends SherlockFragmentActivity
                     .replace(R.id.source_detail_container, fragment)
                     .commit();
         }
+ /*       if (savedInstanceState == null && force_caching) {
+            Caching cache = new Caching();
+            cache.execute("");
+        }
+*/
     }
 
     protected void onSaveInstanceState(Bundle outState) {
@@ -56,6 +74,7 @@ public class SourceListActivity extends SherlockFragmentActivity
         outState.putString("select_id", selecteID);
         outState.putInt("font_size", font_size);
         outState.putBoolean("full_screen", full_screen);
+        outState.putBoolean("force_caching", force_caching);
     }
 
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
@@ -65,6 +84,7 @@ public class SourceListActivity extends SherlockFragmentActivity
         selecteID = savedInstanceState.getString("select_id");
         font_size = savedInstanceState.getInt("font_size");
         full_screen = savedInstanceState.getBoolean("full_screen");
+        force_caching = savedInstanceState.getBoolean("force_caching");
     }
 
     @Override
@@ -108,12 +128,16 @@ public class SourceListActivity extends SherlockFragmentActivity
                 } else {
                     Intent detailIntent = new Intent(this, SourceDetailActivity.class);
                     detailIntent.putExtra(SourceDetailFragment.ARG_ITEM_ID, selecteID);
-                    startActivity(detailIntent);
+                    startActivityForResult(detailIntent, REQUEST_CODE_RANDOM);
                 }
                 break;
             }
             case 2: {
                 if (mTwoPane) {
+                    if (force_caching) {
+                        Caching cash = new Caching();
+                        cash.execute("");
+                    }
                     Bundle arguments = new Bundle();
                     arguments.putString(SourceDetailFragment.ARG_ITEM_ID, selecteID);
                     SourceDetailFragment fragment = new SourceDetailFragment();
@@ -128,6 +152,10 @@ public class SourceListActivity extends SherlockFragmentActivity
 
                     if (sherlockListFragment != null) {
                         sherlockListFragment.getSources(true);
+                        if (force_caching) {
+                            Caching cash = new Caching();
+                            cash.execute("");
+                        }
                     }
                 }
                 break;
@@ -135,7 +163,7 @@ public class SourceListActivity extends SherlockFragmentActivity
             case 3: {
                 Intent intent = new Intent();
                 intent.setClass(this, UmoriliPreferencesActivity.class);
-                startActivityForResult(intent, 0);
+                startActivityForResult(intent, REQUEST_CODE_PREFS);
                 break;
             }
         }
@@ -145,7 +173,24 @@ public class SourceListActivity extends SherlockFragmentActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         loadPref();
-        recreate();
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case REQUEST_CODE_PREFS:
+                    final Activity ctx = this;
+                    messageHandler.postDelayed(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            ctx.recreate();
+                        }
+                    }, 1);
+                    break;
+                case REQUEST_CODE_DETAIL:
+                case REQUEST_CODE_RANDOM:
+                    break;
+            }
+        }
     }
 
     private void loadPref(){
@@ -178,6 +223,7 @@ public class SourceListActivity extends SherlockFragmentActivity
         }
 
         full_screen = mySharedPreferences.getBoolean("fullscreen_preference", false);
+        force_caching = mySharedPreferences.getBoolean("cashing_preference", false);
     }
 
     @Override
@@ -194,9 +240,42 @@ public class SourceListActivity extends SherlockFragmentActivity
         } else {
             Intent detailIntent = new Intent(this, SourceDetailActivity.class);
             detailIntent.putExtra(SourceDetailFragment.ARG_ITEM_ID, selecteID);
-            startActivity(detailIntent);
+            startActivityForResult(detailIntent, REQUEST_CODE_DETAIL);
         }
     }
+
+    @Override
+    public void onBackPressed() {
+        setResult(RESULT_OK);
+        super.onBackPressed();
+    }
+    private UmoriliParser umoriliParser = new UmoriliParser();
+
+    private class Caching extends AsyncTask<String, Void, String> {
+        @Override
+        protected void onPreExecute() {
+            //           super.onPreExecute();
+            Toast.makeText(SourceListActivity.this,
+                    getResources().getString(R.string.caching_text),
+                    Toast.LENGTH_LONG).show();
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            Toast.makeText(SourceListActivity.this,
+                    getResources().getString(R.string.caching_end_text),
+                    Toast.LENGTH_LONG).show();
+        }
+
+        protected String doInBackground(String... urls) {
+            umoriliParser.caching(umoriliParser.sources());
+            return null;
+        }
+
+        protected void onProgressUpdate(Void... progress) {
+        }
+    }
+
 
 }
 

@@ -1,10 +1,12 @@
 package com.sagol.umorili;
 
 import android.app.ProgressDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.view.ContextMenu;
 import android.view.View;
 import android.widget.AdapterView;
@@ -15,7 +17,6 @@ import android.widget.Toast;
 import com.actionbarsherlock.app.SherlockListFragment;
 import com.actionbarsherlock.widget.ShareActionProvider;
 
-import java.util.concurrent.ExecutionException;
 
 public class SourceDetailFragment extends SherlockListFragment {
     public static final String ARG_ITEM_ID = "item_id";
@@ -26,38 +27,8 @@ public class SourceDetailFragment extends SherlockListFragment {
     private GetDataTask getTask;
 
     public boolean getData () {
-        getTask = new GetDataTask(this.getActivity());
-        try {
-            getTask.execute("").get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-
-        mItem = udc_sources.ITEM_MAP.get(getArguments().getString(ARG_ITEM_ID));
-
-        getTask = new GetDataTask(this.getActivity());
-        try {
-            getTask.execute("").get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-
-        if (udc == null || udc.ITEMS.size() == 0) {
-            Toast.makeText(this.getSherlockActivity(),
-                    getResources().getString(R.string.connection_error_text),
-                    Toast.LENGTH_LONG).show();
-            return false;
-        } else {
-            setListAdapter(new UmoriliAdapter(
-                    getActivity(),
-                    R.id.sources_detail_listview,
-                    udc.ITEMS));
-        }
-
+        getTask = new GetDataTask();
+        getTask.execute("");
         return true;
     }
 
@@ -94,15 +65,8 @@ public class SourceDetailFragment extends SherlockListFragment {
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-
-/*        MenuItem actionItem = menu.findItem(R.id.menu_item_share_action_provider_action_bar);
-        ShareActionProvider actionProvider = (ShareActionProvider) actionItem.getActionProvider();
-        actionProvider.setShareHistoryFileName(ShareActionProvider.DEFAULT_SHARE_HISTORY_FILE_NAME);
-        // Note that you can set/change the intent any time,
-        // say when the user has selected an image.
-        actionProvider.setShareIntent(createShareIntent());
-*/
         menu.add(0, 0, 0, getResources().getString(R.string.action_bar_share_with));
+        menu.add(0, 1, 1, getResources().getString(R.string.copy_text));
     }
 
     @Override
@@ -113,12 +77,17 @@ public class SourceDetailFragment extends SherlockListFragment {
         } catch (ClassCastException e) {
             return false;
         }
-
         String text = ((TextView) info.targetView).getText().toString();
-//       Toast.makeText(this.getSherlockActivity(),  String.valueOf(id), Toast.LENGTH_SHORT).show();
-        ShareActionProvider actionProvider = new ShareActionProvider(this.getSherlockActivity());
-        actionProvider.setShareHistoryFileName(ShareActionProvider.DEFAULT_SHARE_HISTORY_FILE_NAME);
-        actionProvider.setShareIntent(createShareIntent(text));
+        if (item.getItemId() == 0) {
+            ShareActionProvider actionProvider = new ShareActionProvider(this.getSherlockActivity());
+            actionProvider.setShareHistoryFileName(ShareActionProvider.DEFAULT_SHARE_HISTORY_FILE_NAME);
+            actionProvider.setShareIntent(createShareIntent(text));
+        } else if (item.getItemId() == 1) {
+            ClipboardManager clipboard = (ClipboardManager)
+                    UmoriliApplication.getAppContext().getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData clip = ClipData.newPlainText("simple text", text);
+            clipboard.setPrimaryClip(clip);
+        }
         return true;
     }
 
@@ -130,36 +99,47 @@ public class SourceDetailFragment extends SherlockListFragment {
 
         private ProgressDialog spinner;
 
-        private FragmentActivity activity;
-
-        public GetDataTask(FragmentActivity activity) {
-            this.activity = activity;
-        }
         @Override
         protected void onPreExecute() {
-            spinner = new ProgressDialog(activity);
+            spinner = new ProgressDialog(getSherlockActivity());
             spinner.setMessage(getResources().getString(R.string.loading_text));
             spinner.show();
         }
 
         @Override
         protected void onPostExecute(String result) {
+                if (udc == null || udc.ITEMS.size() == 0) {
+                    Toast.makeText(getSherlockActivity(),
+                            getResources().getString(R.string.connection_error_text),
+                            Toast.LENGTH_LONG).show();
+                } else {
+                    setListAdapter(new UmoriliAdapter(
+                            getSherlockActivity(),
+                            R.id.sources_detail_listview,
+                               udc.ITEMS));
+                }
             spinner.dismiss();
         }
 
         @Override
         protected String doInBackground(String... urls) {
             String result = "";
-            if (mItem != null) {
-                if (mItem.id.equals("random")) {
-                    udc = umoriliParser.get(100);
-                } else {
-                    udc = umoriliParser.get(mItem.site, mItem.name, 100);
+            udc_sources = umoriliParser.sources();
+            if (udc_sources.ITEMS.size() > 1) {
+                mItem = udc_sources.ITEM_MAP.get(getArguments().getString(ARG_ITEM_ID));
+                if (mItem != null) {
+                    if (mItem.id.equals("random")) {
+                        udc = umoriliParser.get(100);
+                    } else {
+                        udc = umoriliParser.get(mItem.site, mItem.name, 100);
+                    }
                 }
-            } else {
-                udc_sources = umoriliParser.sources();
             }
             return result;
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... progress) {
         }
 
     }

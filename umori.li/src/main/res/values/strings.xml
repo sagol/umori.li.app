@@ -13,11 +13,17 @@
     <string name="loading_text">Загрузка данных...</string>
     <string name="refresh_text">Обновить</string>
     <string name="interface_preferences">Интерфейс</string>
+    <string name="system_preferences">Системные настройки</string>
     <string name="theme_list_preference">Тема</string>
     <string name="font_list_preference">Шрифт</string>
     <string name="full_screen_preference">Полноэкранный режим</string>
     <string name="full_screen_preference_summary">Читать в полноэкранном режиме</string>
     <string name="action_bar_share_with">Поделиться...</string>
+    <string name="copy_text">Копировать</string>
+    <string name="caching_text">Кэширование начато</string>
+    <string name="caching_end_text">Кэширование закончено</string>
+    <string name="caching_preference">Кэширование</string>
+    <string name="caching_preference_summary">Кэширование всех источников</string>
     <string-array name="entries_themes_list">
         <item>Темная</item>
         <item>Светлая</item>

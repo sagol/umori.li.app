@@ -1,10 +1,11 @@
 package com.sagol.umorili;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class UmoriliDataContent {
+public class UmoriliDataContent implements Serializable {
 
     public ArrayList<DataItem> ITEMS = new ArrayList<DataItem>();
 
@@ -15,7 +16,7 @@ public class UmoriliDataContent {
         ITEM_MAP.put(item.id, item);
     }
 
-    public static class DataItem {
+    public static class DataItem  implements Serializable{
         public String id;
         public String site;
         public String name;
