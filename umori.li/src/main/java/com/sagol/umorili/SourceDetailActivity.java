@@ -34,6 +34,7 @@ public class SourceDetailActivity extends SherlockFragmentActivity {
 
         setTheme(THEME);
         super.onCreate(savedInstanceState);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setContentView(R.layout.activity_source_detail);
 
         if (full_screen) getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,

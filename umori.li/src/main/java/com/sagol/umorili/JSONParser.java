@@ -19,9 +19,7 @@ import java.io.InputStreamReader;
 
 public class JSONParser {
 
-    static InputStream is = null;
     static JSONArray jarray = null;
-    static String json = "";
 
     public JSONParser() {
 
@@ -29,6 +27,7 @@ public class JSONParser {
 
     public JSONArray getJSONFromUrl(String url) {
 
+        jarray = null;
         StringBuilder builder = new StringBuilder();
         HttpClient client = new DefaultHttpClient();
         HttpGet httpGet = new HttpGet(url);

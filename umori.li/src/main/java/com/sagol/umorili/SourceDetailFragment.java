@@ -101,6 +101,7 @@ public class SourceDetailFragment extends SherlockListFragment {
 
         @Override
         protected void onPreExecute() {
+            udc = null;
             spinner = new ProgressDialog(getSherlockActivity());
             spinner.setMessage(getResources().getString(R.string.loading_text));
             spinner.show();

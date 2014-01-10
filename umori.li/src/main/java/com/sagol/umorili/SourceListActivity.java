@@ -60,11 +60,11 @@ public class SourceListActivity extends SherlockFragmentActivity
                     .replace(R.id.source_detail_container, fragment)
                     .commit();
         }
- /*       if (savedInstanceState == null && force_caching) {
+        if (savedInstanceState == null && force_caching && UmoriliApplication.getFirstCache()) {
             Caching cache = new Caching();
             cache.execute("");
         }
-*/
+
     }
 
     protected void onSaveInstanceState(Bundle outState) {
@@ -244,17 +244,12 @@ public class SourceListActivity extends SherlockFragmentActivity
         }
     }
 
-    @Override
-    public void onBackPressed() {
-        setResult(RESULT_OK);
-        super.onBackPressed();
-    }
-    private UmoriliParser umoriliParser = new UmoriliParser();
+    private static UmoriliParser umoriliParser = new UmoriliParser();
 
     private class Caching extends AsyncTask<String, Void, String> {
         @Override
         protected void onPreExecute() {
-            //           super.onPreExecute();
+            // super.onPreExecute();
             Toast.makeText(SourceListActivity.this,
                     getResources().getString(R.string.caching_text),
                     Toast.LENGTH_LONG).show();
@@ -262,6 +257,8 @@ public class SourceListActivity extends SherlockFragmentActivity
 
         @Override
         protected void onPostExecute(String result) {
+            if (force_caching)
+                UmoriliApplication.setFirstCache(false);
             Toast.makeText(SourceListActivity.this,
                     getResources().getString(R.string.caching_end_text),
                     Toast.LENGTH_LONG).show();
@@ -271,11 +268,13 @@ public class SourceListActivity extends SherlockFragmentActivity
             umoriliParser.caching(umoriliParser.sources());
             return null;
         }
-
-        protected void onProgressUpdate(Void... progress) {
-        }
     }
 
+    @Override
+    public void onBackPressed() {
+        setResult(RESULT_OK);
+        super.onBackPressed();
+    }
 
 }
 
