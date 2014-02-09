@@ -42,7 +42,10 @@ public class UmoriliParser {
 
     public UmoriliDataContent sources () {
 
-        UmoriliDataContent udc = new UmoriliDataContent();
+        UmoriliDataContent udc = UmoriliApplication.getUDCSources();
+        if (udc == null)
+            udc = new UmoriliDataContent();
+        else return udc;
 
         JSONArray jsonArray = null;
         final String site = "site";
@@ -61,7 +64,9 @@ public class UmoriliParser {
                 udc = deserialize(true, null);
             } catch (IOException e) {
                 e.printStackTrace();
+                udc = null;
             }
+            UmoriliApplication.setUDCSources(udc);
             return udc;
         }
 
@@ -95,8 +100,10 @@ public class UmoriliParser {
                 udc = deserialize(true, null);
             } catch (IOException e) {
                 e.printStackTrace();
+                udc = null;
             }
         }
+        UmoriliApplication.setUDCSources(udc);
         return udc;
     }
 

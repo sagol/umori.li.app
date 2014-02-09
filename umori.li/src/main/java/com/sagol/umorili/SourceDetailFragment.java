@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,7 +23,7 @@ public class SourceDetailFragment extends SherlockListFragment {
     public static final String ARG_ITEM_ID = "item_id";
 
     private UmoriliDataContent.DataItem mItem;
-    public static UmoriliDataContent udc;
+    public  UmoriliDataContent udc = null;
 
     private GetDataTask getTask;
 
@@ -38,15 +39,6 @@ public class SourceDetailFragment extends SherlockListFragment {
         getData();
     }
 
-/*    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_source_detail, container, false);
-        ListView listView = (ListView) v.findViewById(R.id.sources_detail_listview);
-        registerForContextMenu(listView);
-        return v;
-    }
-*/
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         ListView listView = getListView();
@@ -91,9 +83,8 @@ public class SourceDetailFragment extends SherlockListFragment {
         return true;
     }
 
-
     private UmoriliParser umoriliParser = new UmoriliParser();
-    private UmoriliDataContent udc_sources;
+    private UmoriliDataContent udc_sources = null;
 
     private class GetDataTask extends AsyncTask<String, Void, String> {
 
@@ -109,24 +100,21 @@ public class SourceDetailFragment extends SherlockListFragment {
 
         @Override
         protected void onPostExecute(String result) {
-                if (udc == null || udc.ITEMS.size() == 0) {
-                    Toast.makeText(getSherlockActivity(),
-                            getResources().getString(R.string.connection_error_text),
-                            Toast.LENGTH_LONG).show();
-                } else {
-                    setListAdapter(new UmoriliAdapter(
-                            getSherlockActivity(),
-                            R.id.sources_detail_listview,
-                               udc.ITEMS));
-                }
-            spinner.dismiss();
+           if (udc == null || udc.ITEMS.size() == 0) {
+                Toast.makeText(getSherlockActivity(),
+                       getResources().getString(R.string.connection_error_text),
+                       Toast.LENGTH_LONG).show();
+            } else {
+               publishProgress();
+               spinner.dismiss();
+            }
         }
 
         @Override
         protected String doInBackground(String... urls) {
             String result = "";
             udc_sources = umoriliParser.sources();
-            if (udc_sources.ITEMS.size() > 1) {
+            if (udc_sources != null && udc_sources.ITEMS.size() > 1) {
                 mItem = udc_sources.ITEM_MAP.get(getArguments().getString(ARG_ITEM_ID));
                 if (mItem != null) {
                     if (mItem.id.equals("random")) {
@@ -140,8 +128,12 @@ public class SourceDetailFragment extends SherlockListFragment {
         }
 
         @Override
-        protected void onProgressUpdate(Void... progress) {
+        protected void onProgressUpdate(Void... progress) { // надо переделать
+            if (udc != null && getSherlockActivity() != null) {
+                ArrayAdapter<UmoriliDataContent.DataItem> mArrayAdapter = new UmoriliAdapter(
+                        getSherlockActivity(), R.id.sources_detail_listview, udc.ITEMS);
+                setListAdapter(mArrayAdapter);
+            }
         }
-
     }
 }

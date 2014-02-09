@@ -118,7 +118,7 @@ public class SourceListFragment extends SherlockListFragment {
     }
 
     private UmoriliParser umoriliParser = new UmoriliParser();
-    public static UmoriliDataContent udc;
+    public  UmoriliDataContent udc = null;
 
     private class GetSources extends AsyncTask<String, Void, String> {
         private ProgressDialog spinner;
@@ -134,7 +134,7 @@ public class SourceListFragment extends SherlockListFragment {
         protected void onPostExecute(String result) {
 //            if(isAdded())
             {
-                if (udc.ITEMS.size() <= 1) {
+                if (udc == null || udc.ITEMS.size() <= 1) {
                     Toast.makeText(getSherlockActivity(),
                         getResources().getString(R.string.connection_error_text), Toast.LENGTH_LONG).show();
                 } else {

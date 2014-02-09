@@ -16,7 +16,7 @@ import com.actionbarsherlock.view.MenuItem;
 public class SourceListActivity extends SherlockFragmentActivity
         implements SourceListFragment.Callbacks {
 
-
+//    public static boolean off = false;
     public static int THEME = R.style.Theme_Sherlock_Light_DarkActionBar;
     private static boolean mTwoPane = false;
     public static String selecteID = "random";
@@ -43,8 +43,13 @@ public class SourceListActivity extends SherlockFragmentActivity
             font_size     = savedInstanceState.getInt("font_size");
             full_screen   = savedInstanceState.getBoolean("full_screen");
             force_caching = savedInstanceState.getBoolean("force_caching");
+        } else if (force_caching && UmoriliApplication.getFirstCache()) {
+            Caching cache = new Caching();
+            cache.execute("");
         }
+
         setContentView(R.layout.activity_source_list);
+
         if (findViewById(R.id.source_detail_container) != null) {
             mTwoPane = true;
 
@@ -59,10 +64,6 @@ public class SourceListActivity extends SherlockFragmentActivity
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.source_detail_container, fragment)
                     .commit();
-        }
-        if (savedInstanceState == null && force_caching && UmoriliApplication.getFirstCache()) {
-            Caching cache = new Caching();
-            cache.execute("");
         }
 
     }
@@ -133,6 +134,7 @@ public class SourceListActivity extends SherlockFragmentActivity
                 break;
             }
             case 2: {
+                UmoriliApplication.setUDCSources(null);
                 if (mTwoPane) {
                     if (force_caching) {
                         Caching cash = new Caching();
@@ -172,8 +174,11 @@ public class SourceListActivity extends SherlockFragmentActivity
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         loadPref();
-        if (resultCode == RESULT_OK) {
+  //      off = true;
+        recreate();
+/*        if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case REQUEST_CODE_PREFS:
                     final Activity ctx = this;
@@ -191,6 +196,7 @@ public class SourceListActivity extends SherlockFragmentActivity
                     break;
             }
         }
+*/
     }
 
     private void loadPref(){

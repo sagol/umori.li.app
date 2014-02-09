@@ -51,7 +51,7 @@ public class SourceDetailActivity extends SherlockFragmentActivity {
                     .commit();
         }
         try {
-            UmoriliDataContent.DataItem mItem = SourceListFragment.udc.ITEM_MAP.get(selecteID);
+            UmoriliDataContent.DataItem mItem = UmoriliApplication.getUDCSources().ITEM_MAP.get(selecteID);
             setTitle(mItem.desc);
         } catch (Exception e){ // надо переделать на UncaughtExceptionHandler
             setTitle("");
