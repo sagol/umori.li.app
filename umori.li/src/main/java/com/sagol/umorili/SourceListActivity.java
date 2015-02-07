@@ -1,11 +1,9 @@
 package com.sagol.umorili;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.widget.Toast;
 
@@ -27,14 +25,24 @@ public class SourceListActivity extends SherlockFragmentActivity
     final int REQUEST_CODE_DETAIL = 2;
     final int REQUEST_CODE_RANDOM = 3;
 
-    private Handler messageHandler = new Handler();
 
+/*
+    @Override
+    public void onStart() {
+        super.onStart();
+        EasyTracker.getInstance(this).activityStart(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EasyTracker.getInstance(this).activityStop(this);
+    }
+*/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         loadPref();
-//        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         super.onCreate(savedInstanceState);
-//        setSupportProgressBarIndeterminateVisibility(true);
 
         if (savedInstanceState != null) {
             THEME         = savedInstanceState.getInt("theme");

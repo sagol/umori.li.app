@@ -53,7 +53,7 @@ public class UmoriliParser {
         final String desc = "desc";
 
         try {
-            jsonArray = jsonParser.getJSONFromUrl("http://www.umori.li/api/sources");
+            jsonArray = jsonParser.getJSONFromUrl(UmoriliApplication.getAppContext().getResources().getString(R.string.umorili_api_url) + "sources");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -179,7 +179,7 @@ public class UmoriliParser {
 
     public UmoriliDataContent get (String isite, String iname, Integer inum) {
 
-        String url = "http://www.umori.li/api/get?site=";
+        String url = UmoriliApplication.getAppContext().getResources().getString(R.string.umorili_api_url) +"get?site=";
         try {
             url += URLEncoder.encode(isite, "utf-8") + "&name=" + URLEncoder.encode(iname, "utf-8")
                     + "&num=" + Integer.toString(inum);
@@ -192,7 +192,7 @@ public class UmoriliParser {
 
     public UmoriliDataContent get (Integer inum) {
 
-        String url = "http://www.umori.li/api/random?num=" + Integer.toString(inum);
+        String url = UmoriliApplication.getAppContext().getResources().getString(R.string.umorili_api_url) + "random?num=" + Integer.toString(inum);
 
         return get(url);
     }

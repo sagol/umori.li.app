@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="umorili_url">http://www.umori.li/</string>
-    <string name="umorili_api_url">http://www.umori.li/api/</string>
+    <string name="umorili_url">http://umorili.herokuapp.com/</string>
+    <string name="umorili_api_url">http://umorili.herokuapp.com/api/</string>
 
     <string name="app_name">umori.li</string>
     <string name="title_source_detail">...</string>
